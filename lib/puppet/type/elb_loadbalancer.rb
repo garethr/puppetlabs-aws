@@ -39,7 +39,7 @@ Puppet::Type.newtype(:elb_loadbalancer) do
     end
   end
 
-  newparam(:tags, :parent => PuppetX::Property::AwsTag) do
+  newproperty(:tags, :parent => PuppetX::Property::AwsTag) do
     desc 'the tags for the load balancer'
   end
 

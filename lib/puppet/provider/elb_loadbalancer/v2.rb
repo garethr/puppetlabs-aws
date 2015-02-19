@@ -51,6 +51,15 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
         'port' => listener.listener.load_balancer_port,
       }
     end
+    tag_response = elb_client(region).describe_tags(
+      load_balancer_names: [load_balancer.load_balancer_name]
+    )
+    tags = {}
+    unless tag_response.tag_descriptions.nil? || tag_response.tag_descriptions.empty?
+      tag_response.tag_descriptions.first.tags.each do |tag|
+        tags[tag.key.to_sym] = tag.value unless tag.key == 'Name'
+      end
+    end
     {
       name: load_balancer.load_balancer_name,
       ensure: :present,
@@ -58,6 +67,7 @@ Puppet::Type.type(:elb_loadbalancer).provide(:v2, :parent => PuppetX::Puppetlabs
       availability_zones: load_balancer.availability_zones,
       instances: instance_names,
       listeners: listeners,
+      tags: tags,
     }
   end
 
